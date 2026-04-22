@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entgelttransparenz einfach umsetzen — SMF Rechtsanwälte</title>
+<meta name="description" content="Die EU-Entgelttransparenzrichtlinie tritt ab Juni 2026 in Kraft. Wir helfen KMU bei der rechtssicheren Umsetzung — Komplettservice aus einer Hand. SMF Rechtsanwaltsgesellschaft mbH, Dresden.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://entgelttransparenz-einfach.de/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Entgelttransparenz einfach umsetzen — SMF Rechtsanwälte">
+<meta property="og:description" content="Was Sie nicht erklären können, bezahlen Sie. Jetzt Risiko berechnen.">
+<meta property="og:locale" content="de_DE">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LegalService",
+  "name": "SMF Rechtsanwaltsgesellschaft mbH",
+  "url": "https://entgelttransparenz-einfach.de",
+  "telephone": "0351-501931-00",
+  "email": "sekretariat@rae-smf.de",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Könneritzstraße 33",
+    "postalCode": "01067",
+    "addressLocality": "Dresden",
+    "addressCountry": "DE"
+  },
+  "sameAs": [
+    "https://www.instagram.com/entgelttransparenz.einfach",
+    "https://linkedin.com/company/entgelttransparenz-einfach"
+  ]
+}
+</script>
+
+<style>
+/* ─── FONTS ─────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/cormorant/CormorantGaramond-Regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/cormorant/CormorantGaramond-Italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/cormorant/CormorantGaramond-Medium.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter/Inter-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter/Inter-Regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('fonts/inter/Inter-Medium.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+
+/* ─── TOKENS ─────────────────────────────────────────────────── */
+:root {
+  --bordeaux:       #76222E;
+  --bordeaux-hover: #5e1a23;
+  --bordeaux-glow:  rgba(118,34,46,0.15);
+  --gray:           #585858;
+  --dark:           #13100F;
+  --dark-2:         #1C1917;
+  --dark-3:         #252220;
+  --dark-border:    #2E2B29;
+  --cream:          #F2EDE6;
+  --text-muted:     #6B6560;
+  --text-dim:       #3D3A38;
+  --serif:          'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
+  --sans:           'Inter', 'system-ui', sans-serif;
+  --ease:           cubic-bezier(0.22,1,0.36,1);
+}
+
+/* ─── RESET ──────────────────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; font-size:16px; -webkit-text-size-adjust:100%; }
+body {
+  font-family: var(--sans);
+  background: var(--dark);
+  color: var(--cream);
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+@media (hover:none) { body { cursor:auto; } }
+img  { display:block; max-width:100%; }
+a    { color:inherit; text-decoration:none; }
+button { font-family:var(--sans); cursor:none; border:none; background:none; }
+input  { font-family:var(--sans); cursor:none; }
+
+/* ─── CURSOR ─────────────────────────────────────────────────── */
+.cur-dot, .cur-ring {
+  position: fixed; top:0; left:0;
+  transform: translate(-50%,-50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+}
+.cur-dot  { width:6px; height:6px; background:var(--bordeaux); }
+.cur-ring {
+  width:30px; height:30px;
+  border: 1.5px solid rgba(118,34,46,0.45);
+  transition: width .2s var(--ease), height .2s var(--ease), border-color .2s;
+}
+.cur-ring.on { width:50px; height:50px; border-color:var(--bordeaux); }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(28px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.reveal {
+  opacity:0; transform:translateY(28px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.in { opacity:1; transform:none; }
+
+/* ─── NAV ────────────────────────────────────────────────────── */
+.nav {
+  position: fixed; inset:0 0 auto 0;
+  z-index: 100;
+  transition: background .4s, backdrop-filter .4s, box-shadow .4s;
+}
+.nav.scrolled {
+  background: rgba(19,16,15,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 var(--dark-border);
+}
+.nav-inner {
+  display: flex; align-items:center; justify-content:space-between;
+  height: 72px; padding: 0 80px;
+}
+.nav-logo {
+  display: flex; align-items:center; gap:10px;
+  font-family: var(--sans); font-size:.88rem; font-weight:500;
+  color: var(--cream); letter-spacing:.01em; flex-shrink:0;
+}
+.nav-logo svg { width:28px; height:32px; flex-shrink:0; }
+.nav-links {
+  display: flex; align-items:center; gap:2.2rem; list-style:none;
+}
+.nav-links a {
+  font-size:.69rem; font-weight:400; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--text-muted);
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--cream); }
+.nav-cta {
+  display: inline-flex; align-items:center; gap:6px;
+  padding: 9px 22px;
+  background: var(--bordeaux); color: var(--cream) !important;
+  font-size:.69rem !important; font-weight:500 !important;
+  letter-spacing:.1em !important; text-transform:uppercase !important;
+  transition: background .2s !important;
+}
+.nav-cta:hover { background:var(--bordeaux-hover) !important; }
+.nav-burger {
+  display:none; flex-direction:column; gap:5px; padding:4px;
+}
+.nav-burger span {
+  display:block; width:22px; height:1.5px;
+  background:var(--cream); border-radius:2px; transition:.3s;
+}
+@media(max-width:768px){
+  .nav-inner { padding:0 24px; }
+  .nav-links  { display:none; }
+  .nav-burger { display:flex; }
+  .nav-links.open {
+    display:flex; flex-direction:column; position:fixed;
+    top:72px; left:0; right:0; bottom:0;
+    background:rgba(19,16,15,.97); backdrop-filter:blur(16px);
+    padding:2.5rem 2rem; gap:2rem; align-items:flex-start; z-index:99;
+  }
+  .nav-links.open a { font-size:1.1rem; color:var(--cream); }
+}
+
+/* ─── HERO ───────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction:column;
+  background-image: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1800&q=80');
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+/* Replace placeholder: background-image: url('images/hero.jpg'); */
+.hero-ov1 {
+  position:absolute; inset:0;
+  background: rgba(13,10,9,0.75);
+  pointer-events:none;
+}
+.hero-ov2 {
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 60% 50% at 0% 100%, rgba(118,34,46,0.3), transparent);
+  pointer-events:none;
+}
+.hero-content {
+  position: relative; z-index:1;
+  display: flex; flex-direction:column; justify-content:center;
+  flex: 1;
+  padding: 0 80px;
+  padding-top: 100px;
+  padding-bottom: 120px;
+}
+.hero-eyebrow {
+  display: flex; align-items:center; gap:16px;
+  font-size:.69rem; font-weight:400; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--bordeaux);
+  margin-bottom: 1.8rem;
+  animation: fadeUp .6s var(--ease) .15s both;
+}
+.hero-eyebrow::before {
+  content:''; display:block;
+  width:24px; height:1px; background:var(--bordeaux); flex-shrink:0;
+}
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(52px,6.5vw,88px);
+  font-weight: 400; line-height:1.04; letter-spacing:-.01em;
+  color: var(--cream);
+  max-width: 680px;
+  margin-bottom: 0;
+  animation: fadeUp .8s var(--ease) .35s both;
+}
+.hero-headline em { font-style:italic; color:var(--bordeaux); display:block; }
+.hero-rule {
+  width:40px; height:1px; background:var(--bordeaux);
+  margin: 2.25rem 0;
+  animation: fadeUp .6s var(--ease) .55s both;
+}
+.hero-sub {
+  font-size:1rem; font-weight:300; line-height:1.8;
+  color: var(--text-muted); max-width:420px;
+  margin-bottom: 2.4rem;
+  animation: fadeUp .6s var(--ease) .7s both;
+}
+.hero-btns {
+  display: flex; align-items:center; gap:2rem; flex-wrap:wrap;
+  animation: fadeUp .6s var(--ease) .85s both;
+}
+.btn-bordeaux {
+  display: inline-flex; align-items:center; gap:8px;
+  padding: 14px 28px;
+  background: var(--bordeaux); color: var(--cream);
+  font-size:.78rem; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+  transition: background .2s;
+}
+.btn-bordeaux:hover { background:var(--bordeaux-hover); }
+.btn-ghost {
+  font-size:.88rem; font-weight:400; color:var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: rgba(107,101,96,0.4);
+  text-underline-offset: 4px;
+  transition: color .2s, text-decoration-color .2s;
+}
+.btn-ghost:hover { color:var(--cream); text-decoration-color:rgba(242,237,230,.5); }
+
+/* stats bar */
+.hero-stats {
+  position: absolute; bottom:0; left:0; right:0; z-index:1;
+  display: grid; grid-template-columns:repeat(4,1fr);
+  background: rgba(13,10,9,0.6);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter:blur(8px);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  animation: fadeUp .6s var(--ease) 1s both;
+}
+.hero-stat {
+  padding: 1.6rem 2rem;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction:column; gap:.25rem;
+}
+.hero-stat:last-child { border-right:none; }
+.hero-stat-num {
+  font-family: var(--serif);
+  font-size: clamp(32px,3.5vw,48px);
+  font-weight:400; line-height:1; color:var(--cream);
+}
+.hero-stat-unit { font-size:clamp(18px,2vw,28px); color:var(--bordeaux); }
+.hero-stat-label {
+  font-size:.63rem; font-weight:400; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--text-muted);
+  line-height:1.5;
+}
+
+@media(max-width:768px){
+  .hero-content { padding:120px 24px 180px; }
+  .hero-headline { font-size:clamp(40px,11vw,52px); }
+  .hero-stats { grid-template-columns:repeat(2,1fr); }
+  .hero-stat:nth-child(2) { border-right:none; }
+  .hero-stat:nth-child(3) { border-top:1px solid rgba(255,255,255,0.06); border-right:1px solid rgba(255,255,255,0.06); }
+  .hero-stat:nth-child(4) { border-top:1px solid rgba(255,255,255,0.06); border-right:none; }
+  .hero-stat { padding:1.2rem 1.2rem; }
+}
+
+/* ─── SECTION BASE ───────────────────────────────────────────── */
+section {
+  padding: 100px 80px;
+  border-top: 1px solid var(--dark-border);
+}
+.s-tag {
+  display: flex; align-items:center; gap:16px;
+  font-size:.63rem; font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--bordeaux); margin-bottom:1.6rem;
+}
+.s-tag::before {
+  content:''; display:block;
+  width:20px; height:1px; background:var(--bordeaux); flex-shrink:0;
+}
+.s-headline {
+  font-family: var(--serif);
+  font-size: clamp(2rem,4vw,52px);
+  font-weight:400; line-height:1.08; letter-spacing:-.01em;
+  color: var(--cream);
+}
+.s-headline em { font-style:italic; color:var(--bordeaux); }
+
+@media(max-width:768px){
+  section { padding:72px 24px; }
+}
+
+/* ─── SEKTION 1 — RISIKO ─────────────────────────────────────── */
+.risk { background:var(--dark); }
+.risk-grid {
+  display: grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start;
+}
+.risk-intro { padding-top:.4rem; }
+.risk-intro .s-headline { margin-bottom:1.6rem; }
+.risk-body {
+  font-size:1rem; font-weight:300; line-height:1.8;
+  color:var(--text-muted); max-width:440px; margin-bottom:2rem;
+}
+/* accordion */
+.accordion { display:flex; flex-direction:column; }
+.acc-item {}
+.acc-trigger {
+  width:100%; display:flex; align-items:center;
+  justify-content:space-between; gap:1rem;
+  padding: 1.3rem 0;
+  border-top: 1px solid var(--dark-border);
+  color:var(--cream); font-family:var(--sans);
+  font-size:.88rem; font-weight:400; text-align:left; cursor:none;
+  transition: color .2s;
+}
+.acc-item:last-child .acc-trigger { border-bottom:1px solid var(--dark-border); }
+.acc-item.open:last-child .acc-trigger { border-bottom:none; }
+.acc-trigger:hover { color:rgba(242,237,230,.7); }
+.acc-trigger.open { color:var(--cream); }
+.acc-num {
+  font-family:var(--serif); font-size:1.1rem; font-weight:400;
+  color:var(--bordeaux); flex-shrink:0; min-width:26px;
+}
+.acc-title { flex:1; line-height:1.4; }
+.acc-icon {
+  width:16px; height:16px; flex-shrink:0; color:var(--bordeaux);
+  transition: transform .35s var(--ease);
+}
+.acc-trigger.open .acc-icon { transform:rotate(45deg); }
+.acc-panel {
+  max-height:0; overflow:hidden;
+  transition: max-height .45s var(--ease), padding .35s var(--ease);
+}
+.acc-panel.open { max-height:300px; }
+.acc-panel-inner {
+  padding-bottom:1.3rem;
+  border-bottom: 1px solid var(--dark-border);
+}
+.acc-sub {
+  font-size:.75rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--bordeaux); margin-bottom:.6rem;
+}
+.acc-text {
+  font-size:.88rem; font-weight:300; line-height:1.75; color:var(--text-muted);
+}
+@media(max-width:768px){
+  .risk-grid { grid-template-columns:1fr; gap:3rem; }
+}
+
+/* ─── SEKTION 2 — RECHNER ────────────────────────────────────── */
+.calc { background:var(--dark-2); }
+.calc-head { max-width:600px; margin:0 auto 4rem; text-align:center; }
+.calc-head .s-tag { justify-content:center; }
+.calc-head .s-tag::before { display:none; }
+.calc-head .s-headline { margin-bottom:1rem; }
+.calc-head p {
+  font-size:.95rem; font-weight:300; line-height:1.75; color:var(--text-muted);
+}
+.calc-grid {
+  display: grid; grid-template-columns:1fr 1fr;
+  border: 1px solid var(--dark-border);
+  max-width: 960px; margin:0 auto;
+}
+.calc-inputs { padding:3rem; border-right:1px solid var(--dark-border); }
+.calc-results { padding:3rem; }
+.calc-col-label {
+  font-size:.63rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:2rem;
+}
+.field { margin-bottom:1.4rem; }
+.field label {
+  display:block; font-size:.75rem; font-weight:400; letter-spacing:.06em;
+  color:var(--text-muted); margin-bottom:.5rem;
+}
+.field input {
+  width:100%; padding:14px 18px;
+  background:var(--dark-3); border:1px solid var(--dark-border);
+  color:var(--cream);
+  font-family:var(--serif); font-size:1rem; font-weight:400;
+  outline:none; transition:border-color .2s;
+}
+.field input::placeholder { color:var(--text-dim); font-family:var(--sans); font-size:.85rem; }
+.field input:focus { border-color:var(--bordeaux); }
+.field-hint { font-size:.7rem; color:var(--text-dim); margin-top:.35rem; }
+
+.res-label {
+  font-size:.63rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:.8rem;
+}
+.res-total {
+  font-family: var(--serif);
+  font-size: clamp(42px,5.5vw,72px);
+  font-weight:400; line-height:1; color:var(--bordeaux);
+  margin-bottom:.4rem;
+  word-break:break-all;
+}
+.res-sub {
+  font-size:.78rem; font-weight:300; color:var(--text-muted);
+  margin-bottom:2rem;
+}
+.res-rows { margin-bottom:2rem; }
+.res-row {
+  display:flex; justify-content:space-between; align-items:baseline;
+  gap:1rem; padding:.85rem 0;
+  border-bottom:1px solid var(--dark-border);
+}
+.res-row:first-child { border-top:1px solid var(--dark-border); }
+.res-row-label { font-size:.78rem; font-weight:300; color:var(--text-muted); }
+.res-row-val {
+  font-family:var(--serif); font-size:1.1rem;
+  color:var(--cream); white-space:nowrap;
+}
+.flags { display:flex; flex-direction:column; gap:.5rem; margin-bottom:2rem; }
+.flag {
+  padding:.7rem 1rem;
+  border-left: 2px solid var(--bordeaux);
+  background: rgba(118,34,46,0.08);
+  font-size:.72rem; font-weight:400; line-height:1.6; color:var(--text-muted);
+  display:none;
+}
+.flag.show { display:block; }
+.flag strong { color:var(--cream); font-weight:500; }
+.calc-note {
+  margin-top:1.2rem; font-size:.69rem; color:var(--text-dim); line-height:1.65;
+  text-align:center; max-width:960px; margin-left:auto; margin-right:auto;
+}
+.calc-note a { color:rgba(107,101,96,.6); text-decoration:underline; text-underline-offset:3px; }
+@media(max-width:768px){
+  .calc-grid { grid-template-columns:1fr; border:none; }
+  .calc-inputs { border-right:none; border:1px solid var(--dark-border); border-bottom:none; }
+  .calc-results { border:1px solid var(--dark-border); }
+  .calc-inputs, .calc-results { padding:2rem; }
+}
+
+/* ─── SEKTION 3 — KOMPLETTSERVICE ───────────────────────────── */
+.services { background:var(--dark); }
+.services-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start;
+}
+.services-left .s-headline { margin-bottom:2.5rem; }
+.service-list { list-style:none; display:flex; flex-direction:column; }
+.service-item {
+  display:flex; gap:1rem; align-items:flex-start;
+  padding: 1.3rem 0;
+  border-bottom: 1px solid var(--dark-border);
+}
+.service-item:first-child { border-top:1px solid var(--dark-border); }
+.service-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:var(--bordeaux); flex-shrink:0; margin-top:.55rem;
+}
+.service-name {
+  font-size:.9rem; font-weight:500; color:var(--cream);
+  margin-bottom:.2rem; line-height:1.3;
+}
+.service-desc {
+  font-size:.82rem; font-weight:300; color:var(--text-muted); line-height:1.65;
+}
+.coop-box {
+  margin-top:2rem; padding:20px 24px;
+  border:1px solid var(--dark-border); background:var(--dark-2);
+}
+.coop-tag {
+  font-size:.63rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--bordeaux); margin-bottom:.7rem;
+  display:flex; align-items:center; gap:10px;
+}
+.coop-tag::before { content:''; display:block; width:14px; height:1px; background:var(--bordeaux); }
+.coop-text {
+  font-size:.88rem; font-weight:300; color:var(--text-muted); line-height:1.7;
+}
+.coop-text a {
+  color:var(--cream); text-decoration:underline;
+  text-underline-offset:3px; text-decoration-color:rgba(242,237,230,.3);
+  transition:text-decoration-color .2s;
+}
+.coop-text a:hover { text-decoration-color:var(--bordeaux); }
+/* CTA box */
+.cta-box {
+  border:1px solid var(--dark-border); padding:40px;
+  display:flex; flex-direction:column; gap:1.2rem;
+  position:sticky; top:100px;
+}
+.cta-box-title {
+  font-family:var(--serif); font-size:1.65rem; font-weight:400;
+  color:var(--cream); line-height:1.25;
+}
+.cta-box-text {
+  font-size:.88rem; font-weight:300; color:var(--text-muted); line-height:1.7;
+}
+.cta-divider { border:none; border-top:1px solid var(--dark-border); margin:.4rem 0; }
+.cta-secondary {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:.82rem; font-weight:400; color:var(--text-muted);
+  text-decoration:underline; text-decoration-color:rgba(107,101,96,.35);
+  text-underline-offset:4px;
+  transition: color .2s, text-decoration-color .2s;
+}
+.cta-secondary:hover { color:var(--cream); text-decoration-color:rgba(242,237,230,.4); }
+.cta-note {
+  font-size:.69rem; font-weight:400; color:var(--text-dim); letter-spacing:.02em;
+}
+@media(max-width:768px){
+  .services-grid { grid-template-columns:1fr; gap:3rem; }
+  .cta-box { position:static; }
+}
+
+/* ─── SEKTION 4 — TEAM ───────────────────────────────────────── */
+.team { background:var(--dark-2); }
+.team .s-headline { margin-bottom:3rem; }
+.team-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;
+}
+.team-card {
+  border:1px solid var(--dark-border); padding:40px;
+  display:flex; gap:24px; align-items:flex-start;
+  transition: border-color .3s;
+}
+.team-card:hover { border-color:rgba(118,34,46,.35); }
+.team-photo {
+  width:80px; height:80px; border-radius:50%; flex-shrink:0;
+  overflow:hidden; background:var(--dark-3);
+}
+.team-photo img {
+  width:100%; height:100%; object-fit:cover; object-position:top;
+  transition:transform .5s var(--ease);
+}
+.team-card:hover .team-photo img { transform:scale(1.06); }
+.team-initials {
+  width:80px; height:80px; border-radius:50%; flex-shrink:0;
+  background:var(--dark-3); border:1px solid var(--dark-border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:1.3rem; font-weight:400;
+  color:var(--text-dim);
+}
+.team-info { flex:1; }
+.team-role {
+  font-size:.63rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--bordeaux); margin-bottom:.5rem; line-height:1.5;
+}
+.team-name {
+  font-family:var(--serif); font-size:1.15rem; font-weight:400;
+  color:var(--cream); margin-bottom:.5rem;
+}
+.team-bio {
+  font-size:.85rem; font-weight:300; color:var(--text-muted); line-height:1.7;
+}
+@media(max-width:768px){
+  .team-grid { grid-template-columns:1fr; }
+  .team-card { flex-direction:column; padding:28px; }
+}
+
+/* ─── SEKTION 5 — TESTIMONIALS ───────────────────────────────── */
+.testimonials { background:var(--dark); }
+.testimonials .s-headline { margin-bottom:2.5rem; }
+.testi-gate {
+  display:flex; flex-direction:column; align-items:flex-start; gap:1rem;
+  padding:3rem; border:1px solid var(--dark-border);
+}
+.testi-gate p {
+  font-size:.88rem; font-weight:300; color:var(--text-muted);
+  max-width:480px; line-height:1.7;
+}
+.btn-ghost-box {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:11px 22px; border:1px solid var(--dark-border);
+  color:var(--cream); font-family:var(--sans);
+  font-size:.75rem; font-weight:500; letter-spacing:.09em; text-transform:uppercase;
+  transition: background .2s, border-color .2s;
+  cursor:none;
+}
+.btn-ghost-box:hover { background:var(--bordeaux); border-color:var(--bordeaux); }
+#senja-wrap { margin-top:1rem; }
+
+/* ─── SEKTION 6 — FINAL CTA ──────────────────────────────────── */
+.final-cta {
+  background: var(--dark);
+  text-align:center; position:relative; overflow:hidden;
+}
+.final-cta::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(118,34,46,0.18), transparent);
+  pointer-events:none;
+}
+.final-cta-inner { position:relative; z-index:1; }
+.final-cta .s-tag { justify-content:center; }
+.final-cta .s-tag::before { display:none; }
+.final-cta .s-headline {
+  font-size: clamp(2.2rem,5vw,64px);
+  max-width:800px; margin:0 auto 1.4rem;
+}
+.final-cta-sub {
+  font-size:1rem; font-weight:300; color:var(--text-muted);
+  max-width:440px; margin:0 auto 2.4rem; line-height:1.75;
+}
+.final-cta-email {
+  margin-top:1.4rem; font-size:.75rem; color:var(--text-dim);
+}
+.final-cta-email a {
+  color:var(--text-dim); text-decoration:underline;
+  text-underline-offset:3px; text-decoration-color:rgba(61,58,56,.5);
+  transition:color .2s;
+}
+.final-cta-email a:hover { color:var(--text-muted); }
+
+/* ─── FOOTER ─────────────────────────────────────────────────── */
+.footer {
+  background:var(--dark-2);
+  border-top:1px solid var(--dark-border);
+  padding: 48px 80px;
+}
+.footer-grid {
+  display:grid; grid-template-columns:1.4fr 1fr 1fr;
+  gap:3rem; align-items:start;
+}
+.footer-brand-name {
+  font-size:.9rem; font-weight:500; color:var(--cream);
+  margin-bottom:.5rem;
+}
+.footer-brand-sub {
+  font-size:.72rem; font-weight:400; color:var(--text-dim); line-height:1.65;
+  margin-bottom:.8rem;
+}
+.footer-copy { font-size:.72rem; color:var(--text-dim); }
+.footer-col h5 {
+  font-size:.63rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--text-dim); margin-bottom:1rem;
+}
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:.55rem; }
+.footer-col ul a {
+  font-size:.8rem; font-weight:400; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--text-dim); transition:color .2s;
+}
+.footer-col ul a:hover { color:var(--cream); }
+.footer-social { display:flex; gap:.8rem; }
+.social-link {
+  display:flex; align-items:center; justify-content:center;
+  width:36px; height:36px; border:1px solid var(--dark-border);
+  color:var(--text-dim); transition:color .2s, border-color .2s;
+}
+.social-link:hover { color:var(--bordeaux); border-color:var(--bordeaux); }
+.social-link svg { width:18px; height:18px; }
+@media(max-width:768px){
+  .footer { padding:48px 24px; text-align:center; }
+  .footer-grid { grid-template-columns:1fr; gap:2.5rem; }
+  .footer-social { justify-content:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cur-dot"  id="cDot"  aria-hidden="true"></div>
+<div class="cur-ring" id="cRing" aria-hidden="true"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════════════════════ -->
+<header class="nav" id="nav" role="banner">
+  <div class="nav-inner">
+
+    <a href="index.html" class="nav-logo" aria-label="Entgelttransparenz einfach — Startseite">
+      <svg viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M16 1.5L2.5 7.2V16.5c0 9.2 6.5 17.2 13.5 18.9C23 33.7 29.5 25.7 29.5 16.5V7.2L16 1.5z" fill="#76222E"/>
+        <path d="M11 17.8c0-2.5 2-3.8 3.5-2.5.4.4.9.4 1.3 0 1.5-1.3 3.5 0 3.5 2.5 0 1.5-1.2 2.8-3 4.2a.8.8 0 01-1 0c-1.8-1.4-3-2.7-3-4.2z" fill="#F2EDE6"/>
+      </svg>
+      Entgelttransparenz einfach.
+    </a>
+
+    <ul class="nav-links" id="navLinks" role="list">
+      <li><a href="#risiko">Das Risiko</a></li>
+      <li><a href="#rechner">Rechner</a></li>
+      <li><a href="#leistungen">Leistungen</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#referenzen">Referenzen</a></li>
+      <li>
+        <a href="https://calendly.com/m-maerz-rae-smf/kick-off-erstgesprach"
+           target="_blank" rel="noopener noreferrer" class="nav-cta">
+          Erstgespräch &rarr;
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-burger" id="navBurger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════ -->
+<section class="hero" aria-labelledby="heroH">
+  <div class="hero-ov1" aria-hidden="true"></div>
+  <div class="hero-ov2" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">EU-Richtlinie 2023/970 &middot; In Kraft ab 7.&thinsp;Juni 2026</p>
+
+    <h1 class="hero-headline" id="heroH">
+      Was Sie nicht<br>erklären können,<br>
+      <em>bezahlen Sie.</em>
+    </h1>
+
+    <div class="hero-rule" aria-hidden="true"></div>
+
+    <p class="hero-sub">
+      Die Umsetzungsfrist läuft. Wer seine Entgeltlogik nicht dokumentiert hat, haftet — ohne Obergrenze. Wir schaffen in 8 Wochen das System, das Sie schützt.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#rechner" class="btn-bordeaux">
+        Mein Risiko berechnen
+      </a>
+      <a href="https://calendly.com/m-maerz-rae-smf/kick-off-erstgesprach"
+         target="_blank" rel="noopener noreferrer" class="btn-ghost">
+        Erstgespräch buchen
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-stats" aria-label="Kennzahlen">
+    <div class="hero-stat">
+      <div class="hero-stat-num">3<span class="hero-stat-unit">J.</span></div>
+      <div class="hero-stat-label">Rückwirkende Nachlohnforderungen</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">8<span class="hero-stat-unit">Wo.</span></div>
+      <div class="hero-stat-label">Bis zum rechtssicheren System</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num"><span class="hero-stat-unit">∞</span></div>
+      <div class="hero-stat-label">Kein Haftungsdeckel — unbegrenzte Forderungen</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">1<span class="hero-stat-unit" style="font-size:1.4rem">MA</span></div>
+      <div class="hero-stat-label">Genügt für Auskunftsklage nach Art.&thinsp;7</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SEKTION 1 — DAS RISIKO
+═══════════════════════════════════════════════════════════ -->
+<section class="risk" id="risiko" aria-labelledby="risikoH">
+  <div class="risk-grid">
+
+    <div class="risk-intro">
+      <p class="s-tag reveal">Das Risiko</p>
+      <h2 class="s-headline reveal d1" id="risikoH">
+        Das Gesetz, das Ihr Lohngefüge zum <em>Haftungsfall</em> macht.
+      </h2>
+      <p class="risk-body reveal d2">
+        Mit der Richtlinie 2023/970 endet die Ära undokumentierter Gehaltsverhandlungen. Was bisher intern geregelt wurde, wird öffentlich prüfbar. Was nicht erklärbar ist, wird teuer.
+      </p>
+    </div>
+
+    <div class="accordion reveal d2" role="list" aria-label="Risikobereiche">
+
+      <div class="acc-item" role="listitem">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="a1" onclick="accToggle(this)">
+          <span class="acc-num">01</span>
+          <span class="acc-title">Ihr Gehaltschaos — ab Juni eine Klageeinladung</span>
+          <svg class="acc-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="acc-panel" id="a1" role="region">
+          <div class="acc-panel-inner">
+            <p class="acc-sub">Wenn gewachsene Strukturen zur Haftungsfalle werden</p>
+            <p class="acc-text">Viele Vergütungssysteme sind über Jahre gewachsen — individuell ausgehandelt, selten dokumentiert. Genau das wird jetzt zum Problem. Wer seine Gehaltslogik nicht erklären kann, riskiert empfindliche Sanktionen ohne Obergrenze.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" role="listitem">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="a2" onclick="accToggle(this)">
+          <span class="acc-num">02</span>
+          <span class="acc-title">Das Projekt, das Sie nicht länger aufschieben können</span>
+          <svg class="acc-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="acc-panel" id="a2" role="region">
+          <div class="acc-panel-inner">
+            <p class="acc-sub">Wenn Aufschub keine Option mehr ist</p>
+            <p class="acc-text">Die Richtlinie macht Schluss mit dem Aufschieben. Was jahrelang auf Eis lag, muss jetzt angegangen werden — strukturiert, dokumentiert, rechtssicher.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" role="listitem">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="a3" onclick="accToggle(this)">
+          <span class="acc-num">03</span>
+          <span class="acc-title">8 Wochen Antwortfrist. Kein Ermessen. Kein Aufschub.</span>
+          <svg class="acc-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="acc-panel" id="a3" role="region">
+          <div class="acc-panel-inner">
+            <p class="acc-sub">Zeitdruck ab Juni 2026</p>
+            <p class="acc-text">Sobald ein Mitarbeitender Auskunft verlangt, haben Sie acht Wochen. Was jahrelang aufgeschoben wurde, lässt sich nicht unter Fristdruck sauber lösen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item" role="listitem">
+        <button class="acc-trigger" aria-expanded="false" aria-controls="a4" onclick="accToggle(this)">
+          <span class="acc-num">04</span>
+          <span class="acc-title">Wenn Kollegen anfangen zu rechnen, beginnen die Probleme</span>
+          <svg class="acc-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <div class="acc-panel" id="a4" role="region">
+          <div class="acc-panel-inner">
+            <p class="acc-sub">Betriebsfrieden als Gerechtigkeitsfrage</p>
+            <p class="acc-text">Transparenz erzeugt interne Spannungen. Unterschiede zwischen Abteilungen und Mitarbeitenden rücken in den Fokus. Ohne klare Vergütungslogik gerät der Betriebsfrieden ins Wanken.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SEKTION 2 — RECHNER
+═══════════════════════════════════════════════════════════ -->
+<section class="calc" id="rechner" aria-labelledby="calcH">
+  <div class="calc-head reveal">
+    <p class="s-tag">Ihr Haftungsrisiko</p>
+    <h2 class="s-headline" id="calcH">Was kostet <em>Nichtstun?</em></h2>
+    <p>Geben Sie Ihre Unternehmenskennzahlen ein — der Rechner schätzt Ihr Risiko auf Basis der RL (EU)&nbsp;2023/970 Art.&nbsp;16–22.</p>
+  </div>
+
+  <div class="calc-grid reveal d1">
+    <div class="calc-inputs">
+      <p class="calc-col-label">Ihre Kennzahlen</p>
+
+      <div class="field">
+        <label for="f-ma">Mitarbeitende gesamt</label>
+        <input type="number" id="f-ma" placeholder="z. B. 120" min="1" oninput="calcRisk()">
+      </div>
+      <div class="field">
+        <label for="f-brutto">Ø Jahresbrutto (€)</label>
+        <input type="number" id="f-brutto" placeholder="z. B. 52 000" min="1" oninput="calcRisk()">
+      </div>
+      <div class="field">
+        <label for="f-frauen">Frauenanteil (%)</label>
+        <input type="number" id="f-frauen" placeholder="z. B. 45" min="0" max="100" oninput="calcRisk()">
+        <p class="field-hint">Prozentualer Anteil weiblicher Beschäftigter</p>
+      </div>
+      <div class="field">
+        <label for="f-gap">Entgeltlücke (%)</label>
+        <input type="number" id="f-gap" placeholder="z. B. 8" min="0" max="100" oninput="calcRisk()">
+        <p class="field-hint">Nicht erklärbare Lohnlücke zwischen Frauen und Männern</p>
+      </div>
+      <div class="field">
+        <label for="f-jahre">Betriebszugehörigkeit (Jahre)</label>
+        <input type="number" id="f-jahre" placeholder="z. B. 5" min="0" oninput="calcRisk()">
+        <p class="field-hint">Bestimmt den Rückforderungszeitraum (max. 3 J.)</p>
+      </div>
+    </div>
+
+    <div class="calc-results">
+      <p class="res-label">Ihr geschätztes Haftungsrisiko</p>
+      <p class="res-total" id="rTotal" aria-live="polite">–</p>
+      <p class="res-sub" id="rSub">Füllen Sie die Felder links aus.</p>
+
+      <div class="res-rows">
+        <div class="res-row">
+          <span class="res-row-label">Nachlohnforderungen (ohne Deckel)</span>
+          <span class="res-row-val" id="rNach">–</span>
+        </div>
+        <div class="res-row">
+          <span class="res-row-label">Zinsen 5&thinsp;% p. a.</span>
+          <span class="res-row-val" id="rZins">–</span>
+        </div>
+        <div class="res-row">
+          <span class="res-row-label">Bußgelder (6.000&thinsp;€ je Fall)</span>
+          <span class="res-row-val" id="rBuss">–</span>
+        </div>
+      </div>
+
+      <div class="flags" id="flags" aria-live="polite">
+        <div class="flag" id="fl-1">
+          <strong>Ab 1 MA:</strong> Gehaltsangabe in Stellenanzeigen Pflicht.
+        </div>
+        <div class="flag" id="fl-2">
+          <strong>Auskunftsrecht:</strong> 8 Wochen Frist ab erster Anfrage.
+        </div>
+        <div class="flag" id="fl-3">
+          <strong>Lücke über 5&thinsp;%:</strong> Entgeltbewertung Pflicht (Art.&thinsp;9).
+        </div>
+        <div class="flag" id="fl-4">
+          <strong>Ab 100 MA:</strong> Jährlicher Transparenzbericht Pflicht.
+        </div>
+      </div>
+
+      <a href="https://calendly.com/m-maerz-rae-smf/kick-off-erstgesprach"
+         target="_blank" rel="noopener noreferrer" class="btn-bordeaux" style="justify-content:center;display:flex;">
+        Risiko besprechen &rarr;
+      </a>
+    </div>
+  </div>
+
+  <p class="calc-note">
+    Basis: <a href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32023L0970" target="_blank" rel="noopener noreferrer">RL (EU) 2023/970</a> Art.&thinsp;16–22.
+    Nachlohnforderungen ohne Obergrenze (Art.&thinsp;16). Zinsen: 5&thinsp;% p.a. auf Nachlohn, vereinfacht über ½ Laufzeit.
+    Bußgeld: 6.000&thinsp;€ je Fall, 15&thinsp;% der betroffenen MA als klagewillig angenommen.
+    Konservative Schätzung. Keine Rechtsberatung.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SEKTION 3 — KOMPLETTSERVICE
+═══════════════════════════════════════════════════════════ -->
+<section class="services" id="leistungen" aria-labelledby="servH">
+  <div class="services-grid">
+
+    <div class="services-left">
+      <p class="s-tag reveal">Komplettservice</p>
+      <h2 class="s-headline reveal d1" id="servH">
+        Ein Projekt. Alles geregelt. Kein <em>Haftungsrisiko</em> mehr.
+      </h2>
+      <p style="font-size:.88rem;font-weight:300;color:var(--text-muted);margin-bottom:2.5rem;line-height:1.7;max-width:460px;" class="reveal d2">
+        Preis individuell nach Erstgespräch — abhängig von Unternehmensgröße und Ausgangssituation.
+      </p>
+
+      <ul class="service-list reveal d2" aria-label="Leistungsübersicht">
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Jobarchitektur &amp; Stellenbewertung</p>
+            <p class="service-desc">Funktionsfamilien, Laufbahnmodelle, analytische Stellenbewertung.</p>
+          </div>
+        </li>
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Diskriminierungsfreier Kriterienkatalog</p>
+            <p class="service-desc">Jeder Prüfung gewachsen — dokumentiert und verteidigbar.</p>
+          </div>
+        </li>
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Vergütungsstruktur &amp; Gehaltsbänder</p>
+            <p class="service-desc">Klare Logik, öffentlich erklärbar, nachvollziehbar.</p>
+          </div>
+        </li>
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Systemhandbuch zur Exkulpation</p>
+            <p class="service-desc">Ihr Schutzschild — gerichtsfest dokumentiert.</p>
+          </div>
+        </li>
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Betriebsvereinbarung</p>
+            <p class="service-desc">Entwurf und Verhandlungshilfe.</p>
+          </div>
+        </li>
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Schulung HR &amp; Führungskräfte</p>
+            <p class="service-desc">Sicherer Umgang mit dem neuen System.</p>
+          </div>
+        </li>
+        <li class="service-item">
+          <span class="service-dot" aria-hidden="true"></span>
+          <div>
+            <p class="service-name">Finale Prüfung &amp; ETR-Freigabe</p>
+            <p class="service-desc">Rechtssicher. Klagefest. Abgeschlossen.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="coop-box reveal d3">
+        <p class="coop-tag">Kooperation</p>
+        <p class="coop-text">
+          Den einführenden Workshop bieten wir in Kooperation mit
+          <a href="https://www.ellipsis.de/campus/seminare/transparenz-workshop"
+             target="_blank" rel="noopener noreferrer">EllipsisCAMPUS</a> an.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <div class="cta-box reveal d2">
+        <h3 class="cta-box-title">Bereit für den ersten Schritt?</h3>
+        <p class="cta-box-text">
+          In 45 Minuten analysieren wir gemeinsam, wo Ihr Unternehmen steht — und was konkret zu tun ist. Kostenlos und unverbindlich.
+        </p>
+        <a href="https://calendly.com/m-maerz-rae-smf/kick-off-erstgesprach"
+           target="_blank" rel="noopener noreferrer" class="btn-bordeaux">
+          Kick-Off Erstgespräch &rarr;
+        </a>
+        <hr class="cta-divider">
+        <a href="https://calendly.com/m-maerz-rae-smf/beratungstermin"
+           target="_blank" rel="noopener noreferrer" class="cta-secondary">
+          Beratungstermin buchen &rarr;
+        </a>
+        <p class="cta-note">30&thinsp;Min &middot; Video-Call &middot; kostenlos &amp; unverbindlich</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SEKTION 4 — TEAM
+═══════════════════════════════════════════════════════════ -->
+<section class="team" id="team" aria-labelledby="teamH">
+  <p class="s-tag reveal">Ihre Experten</p>
+  <h2 class="s-headline reveal d1" id="teamH">
+    Ihre Experten für <em>Entgelttransparenz.</em>
+  </h2>
+
+  <div class="team-grid">
+
+    <article class="team-card reveal d1">
+      <div class="team-photo" id="photoMM">
+        <img src="images/martin.jpg"
+             alt="Martin März, Rechtsanwalt"
+             onerror="this.parentElement.outerHTML='<div class=\'team-initials\'>MM</div>'">
+      </div>
+      <div class="team-info">
+        <p class="team-role">Spezialist für Arbeitsrecht &middot; SMF Rechtsanwaltsgesellschaft mbH</p>
+        <h3 class="team-name">Martin März</h3>
+        <p class="team-bio">Rechtsanwalt mit Schwerpunkt Arbeitsrecht und Vergütungsstrukturen. Begleitet Unternehmen bei der rechtssicheren Umsetzung der EU-Entgelttransparenzrichtlinie.</p>
+      </div>
+    </article>
+
+    <article class="team-card reveal d2">
+      <div class="team-photo" id="photoDT">
+        <img src="images/dominique.jpg"
+             alt="Dominique Teuber, Führungskräfte-Trainerin"
+             onerror="this.parentElement.outerHTML='<div class=\'team-initials\'>DT</div>'">
+      </div>
+      <div class="team-info">
+        <p class="team-role">Führungskräfte-Trainerin &amp; Organisationsentwicklerin</p>
+        <h3 class="team-name">Dominique Teuber</h3>
+        <p class="team-bio">Spezialisiert auf die Umsetzung organisatorischer Veränderungsprozesse im Mittelstand. Bringt Rechtssicherheit in gelebte Unternehmenskultur.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SEKTION 5 — TESTIMONIALS
+═══════════════════════════════════════════════════════════ -->
+<section class="testimonials" id="referenzen" aria-labelledby="testiH">
+  <p class="s-tag reveal">Referenzen</p>
+  <h2 class="s-headline reveal d1" id="testiH">Was unsere <em>Kunden</em> sagen.</h2>
+
+  <div class="testi-gate reveal d2" id="testiGate">
+    <p>
+      Zum Schutz Ihrer Privatsphäre werden Kundenbewertungen nicht automatisch geladen.
+      Mit Klick auf den Button stellen Sie eine Verbindung zu <strong>widget.senja.io</strong> her.
+    </p>
+    <button class="btn-ghost-box" id="senjaBtn" onclick="loadSenja()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+      Kundenbewertungen anzeigen
+    </button>
+  </div>
+
+  <div id="senja-wrap"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SEKTION 6 — FINAL CTA
+═══════════════════════════════════════════════════════════ -->
+<section class="final-cta" aria-label="Handlungsaufforderung">
+  <div class="final-cta-inner">
+    <p class="s-tag reveal">Jetzt starten</p>
+    <h2 class="s-headline final-cta reveal d1">
+      Bereit, Ihr Risiko auf null zu reduzieren?
+    </h2>
+    <p class="final-cta-sub reveal d2">
+      30 Minuten. Kostenlos. Unverbindlich.<br>
+      Wir zeigen Ihnen den konkreten nächsten Schritt.
+    </p>
+    <a href="https://calendly.com/m-maerz-rae-smf/kick-off-erstgesprach"
+       target="_blank" rel="noopener noreferrer"
+       class="btn-bordeaux reveal d3">
+      Jetzt Termin buchen
+    </a>
+    <p class="final-cta-email reveal d4">
+      <a href="mailto:sekretariat@rae-smf.de">sekretariat@rae-smf.de</a>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-grid">
+
+    <div>
+      <p class="footer-brand-name">Entgelttransparenz einfach.</p>
+      <p class="footer-brand-sub">Eine Initiative der SMF Rechtsanwaltsgesellschaft mbH</p>
+      <p class="footer-copy">&copy; 2026 SMF Rechtsanwaltsgesellschaft mbH</p>
+    </div>
+
+    <div class="footer-col">
+      <h5>Rechtliches</h5>
+      <ul>
+        <li><a href="impressum.html">Impressum</a></li>
+        <li><a href="datenschutz.html">Datenschutz</a></li>
+        <li><a href="agb.html">AGB</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h5>Folgen</h5>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/entgelttransparenz.einfach"
+           target="_blank" rel="noopener noreferrer"
+           class="social-link" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </a>
+        <a href="https://linkedin.com/company/entgelttransparenz-einfach"
+           target="_blank" rel="noopener noreferrer"
+           class="social-link" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════ -->
+<script>
+/* ── CURSOR ─────────────────────────────────────────────────── */
+(function(){
+  const dot  = document.getElementById('cDot');
+  const ring = document.getElementById('cRing');
+  if (!dot || !ring || window.matchMedia('(hover:none)').matches) return;
+
+  let mx=0, my=0, rx=0, ry=0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx+'px'; dot.style.top = my+'px';
+  });
+  (function loop(){
+    rx += (mx-rx)*0.13; ry += (my-ry)*0.13;
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(loop);
+  })();
+
+  document.querySelectorAll('a,button,input').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('on'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('on'));
+  });
+})();
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+(function(){
+  const nav = document.getElementById('nav');
+  const upd = () => nav.classList.toggle('scrolled', window.scrollY > 80);
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+})();
+
+/* ── MOBILE BURGER ───────────────────────────────────────────── */
+(function(){
+  const btn   = document.getElementById('navBurger');
+  const links = document.getElementById('navLinks');
+  if (!btn||!links) return;
+  btn.addEventListener('click', () => {
+    const o = links.classList.toggle('open');
+    btn.setAttribute('aria-expanded', o);
+    document.body.style.overflow = o ? 'hidden' : '';
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    document.body.style.overflow = '';
+  }));
+})();
+
+/* ── SCROLL REVEAL ───────────────────────────────────────────── */
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if (!els.length) return;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => {
+      if (e.isIntersecting) {
+        // stagger: nth-child × 80ms
+        const delay = (e.target.dataset.delay || 0);
+        setTimeout(() => e.target.classList.add('in'), delay);
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -32px 0px'});
+
+  // assign stagger delays to siblings
+  const parents = new Set();
+  els.forEach(el => parents.add(el.parentElement));
+  parents.forEach(parent => {
+    const kids = parent.querySelectorAll(':scope > .reveal');
+    kids.forEach((kid, i) => kid.dataset.delay = i * 80);
+  });
+
+  els.forEach(el => io.observe(el));
+})();
+
+/* ── ACCORDION ───────────────────────────────────────────────── */
+function accToggle(btn) {
+  const panelId = btn.getAttribute('aria-controls');
+  const panel   = document.getElementById(panelId);
+  const isOpen  = btn.classList.contains('open');
+
+  document.querySelectorAll('.acc-trigger.open').forEach(b => {
+    if (b !== btn) {
+      b.classList.remove('open');
+      b.setAttribute('aria-expanded','false');
+      document.getElementById(b.getAttribute('aria-controls'))?.classList.remove('open');
+    }
+  });
+
+  btn.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', !isOpen);
+  panel?.classList.toggle('open', !isOpen);
+}
+
+/* ── CALCULATOR ──────────────────────────────────────────────── */
+function fmt(n) {
+  if (!n || isNaN(n)) return '–';
+  return new Intl.NumberFormat('de-DE', {
+    style:'currency', currency:'EUR', maximumFractionDigits:0
+  }).format(Math.round(n));
+}
+
+function calcRisk() {
+  const MA     = parseFloat(document.getElementById('f-ma').value)     || 0;
+  const brutto = parseFloat(document.getElementById('f-brutto').value)  || 0;
+  const frauen = parseFloat(document.getElementById('f-frauen').value)  || 0;
+  const gap    = parseFloat(document.getElementById('f-gap').value)     || 0;
+  const jahre  = parseFloat(document.getElementById('f-jahre').value)   || 0;
+
+  const empty = !MA || !brutto || !frauen || !gap || !jahre;
+
+  if (empty) {
+    document.getElementById('rTotal').textContent = '–';
+    document.getElementById('rSub').textContent   = 'Füllen Sie die Felder aus.';
+    ['rNach','rZins','rBuss'].forEach(id => document.getElementById(id).textContent = '–');
+    ['fl-1','fl-2','fl-3','fl-4'].forEach(id => document.getElementById(id).classList.remove('show'));
+    return;
+  }
+
+  const femaleMa = Math.round(MA * frauen / 100);
+  const annDiff  = (brutto * gap / 100) * femaleMa;
+  const backpay  = annDiff * Math.min(jahre, 3);
+  const interest = backpay * 0.05 * (Math.min(jahre,3) / 2);
+  const cases    = Math.max(1, Math.round(femaleMa * 0.15));
+  const fine     = cases * 6000;
+  const total    = backpay + interest + fine;
+
+  document.getElementById('rTotal').textContent = fmt(total);
+  document.getElementById('rSub').textContent   = 'Gesamtrisiko (Nachlohn + Zinsen + Bußgelder)';
+  document.getElementById('rNach').textContent  = fmt(backpay);
+  document.getElementById('rZins').textContent  = fmt(interest);
+  document.getElementById('rBuss').textContent  = fmt(fine);
+
+  // always show flags 1+2
+  document.getElementById('fl-1').classList.add('show');
+  document.getElementById('fl-2').classList.add('show');
+  document.getElementById('fl-3').classList.toggle('show', gap > 5);
+  document.getElementById('fl-4').classList.toggle('show', MA >= 100);
+}
+
+/* ── SENJA (DSGVO lazy) ──────────────────────────────────────── */
+function loadSenja() {
+  const gate = document.getElementById('testiGate');
+  const wrap = document.getElementById('senja-wrap');
+  const btn  = document.getElementById('senjaBtn');
+  if (btn) { btn.disabled=true; btn.textContent='Wird geladen…'; }
+
+  const div = document.createElement('div');
+  div.className = 'senja-embed';
+  div.setAttribute('data-id',       '3e27927e-120c-4493-abb3-a68fb071b644');
+  div.setAttribute('data-mode',     'shadow');
+  div.setAttribute('data-lazyload', 'false');
+  div.style.cssText = 'display:block;width:100%';
+  wrap.appendChild(div);
+
+  const sc = document.createElement('script');
+  sc.src   = 'https://widget.senja.io/widget/3e27927e-120c-4493-abb3-a68fb071b644/platform.js';
+  sc.async = true;
+  sc.onload  = () => { if(gate) gate.style.display='none'; };
+  sc.onerror = () => {
+    wrap.innerHTML='<p style="font-size:.85rem;color:var(--text-dim);padding:1rem 0;">Bewertungen konnten nicht geladen werden.</p>';
+    if(gate) gate.style.display='none';
+  };
+  document.head.appendChild(sc);
+}
+</script>
+
+</body>
+</html>
